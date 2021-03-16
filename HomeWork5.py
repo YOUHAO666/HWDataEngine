@@ -12,6 +12,25 @@ from wordcloud import WordCloud
 
 #加载Market_Basket_Optimisation
 
+#去除虚词
+def remove_stop_words(f):
+    stop_word = []
+    for stop_word in stop_word:
+        f.replace(stop_word,'')
+    return f
+
+#  创造词云函数
+def create_word_cloud(f):
+	# f = remove_stop_words(f)
+    text  = ''
+    for value in f:
+        text = text + '' + value
+    wc = WordCloud(max_words=100, width=2000, height=1200)
+    wordcloud = wc.generate(text)
+    wordcloud.to_file("wordcloud.jpg")
+
+#################################################################
+
 data= pd.read_csv('./Market_Basket_Optimisation.csv',header=None)
 # print(data)
 
@@ -31,35 +50,22 @@ for i in range(data.shape[0]):
             else:
                 item_count[item]+=1
     transactions.append(temp)
-# print(transactions)
+print(transactions)
 
 #  创造词云函数
 
-#去除虚词
-def remove_stop_words(f):
-    stop_word = []
-    for stop_word in stop_word:
-        f.replace(stop_word,'')
-    return f
-
-
-def create_word_cloud(f):
-	f = remove_stop_words(f)
-	# cut_text = word_tokenize(f)
-	# cut_text = " ".join(f) #使用后会变成字母，而不是词汇
-	wc = WordCloud(
-		max_words=100,
-		width=2000,
-		height=1200,
-    )
-	wordcloud = wc.generate(f)
-
-	wordcloud.to_file("wordcloud.jpg")
+def fetchwords(transactions):
+    goods = []
+    for record in transactions:
+        for good in record:
+            goods = goods + [good]
+    return goods
 
 #生成词云
-all_word = ''.join('%s' %item for item in transactions)
-print(all_word)
-create_word_cloud(all_word)
+# all_word = ''.join('%s' %item for item in transactions)
+all_goods = fetchwords(transactions)
+
+create_word_cloud(all_goods)
 
 #打印排名前十的商品
 print(sorted(item_count.items(),key= lambda x:x[1],reverse=True)[:10])
